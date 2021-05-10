@@ -50,7 +50,7 @@ This project was also the first time that any of us were dependent on using docu
 - Counterintuitive qualities to the layout and content of the documentation, to the extent that I was unable to locate installation instructions; I had to use a combination of Google and educated guessing in order to get our Mapbox package installed.
 - There are many similarly named yet apparently incompatible packages under the Mapbox umbrella. The one we were using was ReactMapGL, but that didn’t prevent me from erroneously installing ReactMapboxGL, MapGL or MapboxGL at various points.
 
-```
+```json
 "react-map-gl":"^6.1.10",
 "react-mapbox-gl": "^5.1.1",
 ```
@@ -69,7 +69,7 @@ I quickly deduced that the data was being duplicated because the .map() method h
 
 As it turned out, the solution was to use params to get the ID of the selected package, make a new GET request for the full set of places, and then filter the results:
 
-```
+```javascript
 const { id } = useParams()
 
 const [locations, setLocations] = useState([])
@@ -92,7 +92,7 @@ After much research, I discovered that a PATCH request was likely to do the job.
 
 When I had put all of this together, it worked perfectly. Here’s how it looked:
 
-```
+```javascript
 const handleClick = async () => {
     setSaved('Saved! View your profile to see your saved places.')
     setButton(false)
@@ -103,7 +103,7 @@ const handleClick = async () => {
       }
     })
 ```
-```
+```javascript
 export const addSavedPlace = async (req, res) => {
   console.log('REQ BODY', req.body)
   try {
@@ -123,7 +123,7 @@ export const addSavedPlace = async (req, res) => {
 
 After this, getting the items to display on the user profile went fairly smoothly. I made a new component, GetMyPlaces, which took props from UserProfile. A new GET request was made, returning all of the places; these places were then run through a .filter(), checking to see if they existed in the savedPlaces array of the user:
 
-```
+```javascript
 const GetMyPlaces = (props) => {
   const [allMyPlaces, setAllMyPlaces] = useState(null)
 
@@ -143,13 +143,13 @@ const GetMyPlaces = (props) => {
 
 Finding an on-brand and workable star rating plugin actually took several goes; as it turned out, I ended up using the example on [https://www.30secondsofcode.org/react/s/star-rating](https://www.30secondsofcode.org/react/s/star-rating) to build my own. This was not without its complications, however. The StarRating component takes one destructured prop ({ value }) by design; but I needed to pass in the ID of the selected Place as well, so that I could make a POST request to the ‘/ratings’ endpoint of that particular place. After a few failed attempts, the solution was to spread in the ID, like so:
 
-```
+```javascript
 const StarRating = ({ value, ..._id }) => {
 ```
 
 This did result in ```_id``` becoming an Object, so the POST request URL is a bit strange - but at least it works!
 
-```
+```javascript
 const response = await axios.post(`/api/places/${_id._id}/ratings`,
 ```
 
